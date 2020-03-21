@@ -1,4 +1,4 @@
-. .\formatting.ps1
+. "$(Split-Path $script:MyInvocation.MyCommand.Path)\formatting.ps1"
 
 # Renders a 2 columns layout, with $left argument written to the extreme left of the console, and $right to the extreme
 # right. The cursor is restored back to its position thus should not be impacted.
