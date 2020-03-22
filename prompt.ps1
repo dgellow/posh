@@ -86,7 +86,7 @@ function prompt {
 	# Main and current directory
 	$mainDir = (Current-Main-Directory)
 	if ($mainDir -ne "") {
-		$left += (With-Grey $mainDir) + " | "
+		$left += (With-Black $mainDir) + " | "
 	}
 	$left += With-Magenta (Current-Directory)
 
