@@ -19,13 +19,7 @@ function Write-Layout ($left, $right) {
 
 # Get the current directory. If at the root of a drive, the name of the file is returned without the slash, e.g: "C:"
 function Current-Directory {
-	$location = (Get-Location).Path
-	$split = $location.Split("\")
-
-	if ($split[-1] -eq "") {
-		return $split[0]
-	}
-	return $split[-1]
+	return Split-Path (Get-Location) -Leaf
 }
 
 function New-Path($string) {
