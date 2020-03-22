@@ -2,7 +2,7 @@
 
 # Renders a 2 columns layout, with $left argument written to the extreme left of the console, and $right to the extreme
 # right. The cursor is restored back to its position thus should not be impacted.
-function Layout ($left, $right) {
+function Write-Layout ($left, $right) {
 	Write-Host $left -NoNewline
 
 	$origX = $Host.UI.RawUI.CursorPosition.X
@@ -15,8 +15,6 @@ function Layout ($left, $right) {
 
 	$position = New-Object System.Management.Automation.Host.Coordinates $origX, $origY
 	$Host.UI.RawUI.CursorPosition = $position
-
-	return " "
 }
 
 # Get the current directory. If at the root of a drive, the name of the file is returned without the slash, e.g: "C:"
@@ -114,6 +112,6 @@ function prompt {
 	}
 
 	# Renders the prompt
-	Layout $left $right
-	return ""
+	Write-Layout $left $right
+	return " "
 }
