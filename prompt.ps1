@@ -28,37 +28,68 @@ function Current-Directory {
 	return $split[-1]
 }
 
+function New-Path($string) {
+	return (Join-Path -Path $string -ChildPath ".").TrimEnd("\/.")
+}
+
+function Safe-Split-Path ($path) {
+	$safe = New-Path $path
+	if ($IsWindows) {
+		return $safe.Split("\")
+	}
+	return $safe.Split("/")
+}
+
+function Count-Path ($path) {
+	return (Safe-Split-Path $path).Length
+}
+
 # The "main" directory is roughly defined as a contextual directory name that helps understand what the "current
 # directory" is. Depending what the current location is, the main directory can be the drive name, the parent directory,
 # "Users\Sam", or nothing (in case where the current directory is a drive root).
 function Current-Main-Directory {
 	$fullname = (Get-Location).Path
-	$split = $fullname.Split("\")
+	$split = @(Safe-Split-Path $fullname)
 
-	if ($fullname.StartsWith("C:\Users\Sam\OneDrive") -and ($split.Length -gt 5)) {
-		return "OneDrive\" + $split[4]
+	$oneDrivePath = New-Path "${HOME}/OneDrive" # e.g: C:\Users\Sam\OneDrive
+	if ($IsLinux -and (Test-Path "/mnt/c")) {
+		# mounted path under WSL
+		$oneDrivePath = New-Path "/mnt/c/Users/Sam/OneDrive"
 	}
 
-	if ($fullname.StartsWith("C:\Users\Sam\") -and ($split.Length -gt 4)) {
-		return $split[3]
+	$count = Count-Path $onedrivePath
+	# deep in onedrive directory
+	if ($fullname.StartsWith($oneDrivePath) -and ($split.Length -gt $count + 1)) {
+		return [string](New-Path ("OneDrive/{0}" -f $split[$count]))
 	}
-
-	if ($fullname.StartsWith("C:\Users\Sam\") -and ($split.Length -eq 4)) {
-		return "Users\Sam"
-	}
-
-	if ($fullname.StartsWith("C:\Users\Sam\OneDrive") -and ($split.Length -eq 5)) {
+	# in onedrive directory
+	if ($fullname.StartsWith($oneDrivePath) -and ($split.Length -eq (Count-Path $oneDrivePath) + 1)) {
 		return "OneDrive"
 	}
 
-	if ($split[-1] -eq "") {
+	$count = Count-Path $HOME
+	# deep in home directory
+	if ($fullname.StartsWith($HOME) -and ($split.Length -gt $count + 1)) {
+		return $split[$count]
+	}
+	# in home directory
+	if ($fullname.StartsWith($HOME) -and ($split.Length -eq $count + 1)) {
+		$parent = Split-Path (Split-Path $HOME -Parent) -Leaf
+		$leaf = Split-Path $HOME -Leaf
+		return [string](New-Path ("{0}/{1}" -f $parent, $leaf))
+	}
+
+	# top directory
+	if ($split.Length -gt 2) {
+		return Split-Path $fullname -Parent
+	}
+
+	# root level
+	if (($split.Length -eq 1) -or ($split[-1] -eq "")) {
 		return ""
 	}
 
-	if ($split.Length -gt 2) {
-		return $split[1]
-	}
-
+	# default
 	return $split[0]
 }
 
@@ -71,8 +102,14 @@ function Git-Branch {
 
 # Check if current user is an administrator
 function Test-Administrator {
-	$user = [Security.Principal.WindowsIdentity]::GetCurrent()
-	return ([Security.Principal.WindowsPrincipal] $user).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+	if ($IsLinux -or $IsMacOS) {
+		return ((id -u) -eq 0)
+	}
+	if ($IsWindows) {
+		$user = [Security.Principal.WindowsIdentity]::GetCurrent()
+		return ([Security.Principal.WindowsPrincipal] $user).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+	}
+	return false
 }
 
 # Define the command prompt
