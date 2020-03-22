@@ -68,7 +68,7 @@ enum TextColors {
 
 function Try-Styles {
 	[TextStyles].GetEnumNames() | ForEach-Object {
-		$style = [int]([Textstyles]::$_)
+		$style = [int]([TextStyles]::$_)
 		$escaped = (escape $style)
 		$reset = "$([char]27)[m"
 		"$escaped{0,-20}$reset{1,3}" -f $_, $style
@@ -98,91 +98,91 @@ function With-Color ([TextColors] $color, $message) {
 
 # Styles
 function With-Reset ($message) {
-	return With-Style [TextStyles]::reset $message
+	return With-Style reset $message
 }
 function With-Bold ($message) {
-	return With-Style [TextStyles]::bold $message
+	return With-Style bold $message
 }
 function With-Thin ($message) {
-	return With-Style [TextStyles]::thin $message
+	return With-Style thin $message
 }
 function With-Italic ($message) {
-	return With-Style [TextStyles]::italic $message
+	return With-Style italic $message
 }
 function With-Underline ($message) {
-	return With-Style [TextStyles]::underline $message
+	return With-Style underline $message
 }
 function With-SlowBlink ($message) {
-	return With-Style [TextStyles]::slowBlink $message
+	return With-Style slowBlink $message
 }
 function With-RapidBlink ($message) {
-	return With-Style [TextStyles]::rapidBlink $message
+	return With-Style rapidBlink $message
 }
 function With-Inverse ($message) {
-	return With-Style [TextStyles]::inverse $message
+	return With-Style inverse $message
 }
 function With-Conceal ($message) {
-	return With-Style [TextStyles]::conceal $message
+	return With-Style conceal $message
 }
 function With-CrossedOut ($message) {
-	return With-Style [TextStyles]::crossedOut $message
+	return With-Style crossedOut $message
 }
 function With-FontPrimary ($message) {
-	return With-Style [TextStyles]::fontPrimary $message
+	return With-Style fontPrimary $message
 }
 function With-FontAlt1 ($message) {
-	return With-Style [TextStyles]::fontAlt1 $message
+	return With-Style fontAlt1 $message
 }
 function With-FontAlt2 ($message) {
-	return With-Style [TextStyles]::fontAlt2 $message
+	return With-Style fontAlt2 $message
 }
 function With-FontAlt3 ($message) {
-	return With-Style [TextStyles]::fontAlt3 $message
+	return With-Style fontAlt3 $message
 }
 function With-FontAlt4 ($message) {
-	return With-Style [TextStyles]::fontAlt4 $message
+	return With-Style fontAlt4 $message
 }
 function With-FontAlt5 ($message) {
-	return With-Style [TextStyles]::fontAlt5 $message
+	return With-Style fontAlt5 $message
 }
 function With-FontAlt6 ($message) {
-	return With-Style [TextStyles]::fontAlt6 $message
+	return With-Style fontAlt6 $message
 }
 function With-FontAlt7 ($message) {
-	return With-Style [TextStyles]::fontAlt7 $message
+	return With-Style fontAlt7 $message
 }
 function With-FontAlt8 ($message) {
-	return With-Style [TextStyles]::fontAlt8 $message
+	return With-Style fontAlt8 $message
 }
 function With-FontAlt9 ($message) {
-	return With-Style [TextStyles]::fontAlt9 $message
+	return With-Style fontAlt9 $message
 }
 function With-Fraktur ($message) {
-	return With-Style [TextStyles]::fraktur $message
+	return With-Style fraktur $message
 }
 function With-UnderlineDouble ($message) {
-	return With-Style [TextStyles]::underlineDouble $message
+	return With-Style underlineDouble $message
 }
 function With-ResetItalic ($message) {
-	return With-Style [TextStyles]::resetItalic $message
+	return With-Style resetItalic $message
 }
 function With-ResetFraktur ($message) {
-	return With-Style [TextStyles]::resetFraktur $message
+	return With-Style resetFraktur $message
 }
 function With-ResetUnderline ($message) {
-	return With-Style [TextStyles]::resetUnderline $message
+	return With-Style resetUnderline $message
 }
 function With-ResetBlink ($message) {
-	return With-Style [TextStyles]::resetBlink $message
+	return With-Style resetBlink $message
 }
 function With-ResetInverse ($message) {
-	return With-Style [TextStyles]::resetInverse $message
+	return With-Style resetInverse $message
 }
 function With-ResetConceal ($message) {
-	return With-Style [TextStyles]::resetConceal $message
+	return With-Style resetConceal $message
 }
 function With-ResetCrossedOut ($message) {
-	return With-Style [TextStyles]::resetCrossedOut $message
+	return With-Style resetCrossedOut $message
 }
 
 # Foreground colors
