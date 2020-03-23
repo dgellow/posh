@@ -103,7 +103,7 @@ function Test-Administrator {
 		$user = [Security.Principal.WindowsIdentity]::GetCurrent()
 		return ([Security.Principal.WindowsPrincipal] $user).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 	}
-	return false
+	return ""
 }
 
 # Define the command prompt
