@@ -7,9 +7,11 @@ function Write-Layout ($left, $right) {
 
 	$origX = $Host.UI.RawUI.CursorPosition.X
 	$origY = $Host.UI.RawUI.CursorPosition.Y
-	$rightX = $Host.UI.RawUI.WindowSize.Width - $right.Length
+
+	$rightX = $Host.UI.RawUI.WindowSize.Width - (Length-Without-ANSI $right)
 	$rightY = $Host.UI.RawUI.CursorPosition.Y
 	$position = New-Object System.Management.Automation.Host.Coordinates $rightX, $rightY
+
 	$Host.UI.RawUI.CursorPosition = $position
 	Write-Host $right -NoNewLine
 
@@ -106,9 +108,48 @@ function Test-Administrator {
 	return ""
 }
 
+# ZenMode
+$Global:ZenMode = [Boolean]::FalseString
+
+function Start-ZenMode {
+	Clear-Host
+	$Global:ZenMode = [Boolean]::TrueString
+
+	Set-PSReadLineKeyHandler -Chord enter -ScriptBlock {
+		[Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen()
+		[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+		Write-Host "`n`n"
+	}
+}
+
+function Stop-ZenMode {
+	Clear-Host
+	$Global:ZenMode = [Boolean]::FalseString
+
+	Set-PSReadLineKeyHandler -Chord enter -ScriptBlock {
+		[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+	}
+}
+
 # Define the command prompt
 function prompt {
 	$lastCommandResult = $?
+
+	if ($Global:ZenMode -eq [Boolean]::TrueString) {
+		$left = "{0}`t" -f "`n" * 3
+		if ($Host.UI.RawUI.CursorPosition.Y -lt 2) {
+			$left = "`t"
+		}
+
+		$right = " "
+		if (!$lastCommandResult) {
+			$right = With-Red "◆"
+		}
+
+		Write-Layout $left $right
+		return " "
+	}
+
 	$left = ""
 	$right = ""
 
@@ -126,7 +167,7 @@ function prompt {
 	}
 
 	# Current time
-	$time = Get-Date -Format "%H:%m:%s"
+	$time = Get-Date -Format "HH:mm:ss"
 	if ($lastCommandResult) {
 		$right += " " + (With-Green $time)
 	}

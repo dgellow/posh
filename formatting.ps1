@@ -88,6 +88,10 @@ function escape ($attr) {
 	return "$([char]27)[$([int]$attr)m"
 }
 
+function Length-Without-ANSI([string] $str) {
+	return ($str -replace "`e[\[0-9]*m").Length
+}
+
 function With-Style([TextStyles] $style, $message) {
 	return "{0}{1}{2}" -f (escape $style), $message, (escape $reset)
 }
