@@ -1,4 +1,5 @@
 . "$(Split-Path $script:MyInvocation.MyCommand.Path)\formatting.ps1"
+. "$(Split-Path $script:MyInvocation.MyCommand.Path)\python.ps1"
 
 # Renders a 2 columns layout, with $left argument written to the extreme left of the console, and $right to the extreme
 # right. The cursor is restored back to its position thus should not be impacted.
@@ -109,11 +110,11 @@ function Test-Administrator {
 }
 
 # ZenMode
-$Global:ZenMode = [Boolean]::FalseString
+$global:ZenMode = [Boolean]::FalseString
 
 function Start-ZenMode {
 	Clear-Host
-	$Global:ZenMode = [Boolean]::TrueString
+	$global:ZenMode = [Boolean]::TrueString
 
 	Set-PSReadLineKeyHandler -Chord enter -ScriptBlock {
 		[Microsoft.PowerShell.PSConsoleReadLine]::ClearScreen()
@@ -124,7 +125,7 @@ function Start-ZenMode {
 
 function Stop-ZenMode {
 	Clear-Host
-	$Global:ZenMode = [Boolean]::FalseString
+	$global:ZenMode = [Boolean]::FalseString
 
 	Set-PSReadLineKeyHandler -Chord enter -ScriptBlock {
 		[Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
@@ -135,7 +136,7 @@ function Stop-ZenMode {
 function prompt {
 	$lastCommandResult = $?
 
-	if ($Global:ZenMode -eq [Boolean]::TrueString) {
+	if ($global:ZenMode -eq [Boolean]::TrueString) {
 		$left = "{0}`t" -f "`n" * 3
 		if ($Host.UI.RawUI.CursorPosition.Y -lt 2) {
 			$left = "`t"
@@ -185,5 +186,20 @@ function prompt {
 
 	# Renders the prompt
 	Write-Layout $left $right
+
+	# Python venv
+	switch (Try-ActivatePython) {
+		([PythonVenvStatus]::activated) {
+			$msg = (With-Green "▶") + " Python venv activated"
+			Write-Host "`n$msg"
+			prompt
+		}
+		([PythonVenvStatus]::deactivated) {
+			$msg = (With-Yellow "▶") + " Python venv deactivated"
+			Write-Host "`n$msg"
+			prompt
+		}
+	}
+
 	return " "
 }
