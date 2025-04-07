@@ -109,6 +109,11 @@ function Test-Administrator {
 	return ""
 }
 
+# Check if Visual Studio dev environment is loaded
+function Test-VsDevEnvironment {
+	return ($null -ne $env:VSINSTALLDIR) -and ($null -ne $env:VCToolsVersion)
+}
+
 # ZenMode
 $global:ZenMode = [Boolean]::FalseString
 
@@ -165,6 +170,11 @@ function prompt {
 	$isInGitDir = $(git rev-parse --is-inside-work-tree 2>$null)
 	if ($isInGitDir) {
 		$left += " :: " + (With-Magenta (Git-Branch))
+	}
+
+	# VS Dev Environment indicator
+	if (Test-VsDevEnvironment) {
+		$right += " " + (With-DarkCyan "[vsdev]")
 	}
 
 	# Current time
